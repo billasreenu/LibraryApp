@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Compile') {
             steps {
-                custExecGradleTask('clean', 'classes')
+                custExecGradleTask('clean')
             }
         }
         stage('Unit Tests') {
@@ -70,7 +70,7 @@ pipeline {
     post {
         always {
             echo 'I have finished'
-			mail to: 'billa.sreenivasarao@gmail.com', subject: 'Build Completed', body: 'Please verify status!'
+			//mail to: 'billa.sreenivasarao@gmail.com', subject: 'Build Completed', body: 'Please verify status!'
             deleteDir() // clean up workspace
         }
         success {
