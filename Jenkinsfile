@@ -16,8 +16,9 @@ pipeline {
             }
         }
         stage('Unit Tests') {
-		    echo 'Execute gradle test step'
+		   
             steps {
+    			echo 'Execute gradle test step'
                 custExecGradleTask('test')
             }
             post {
