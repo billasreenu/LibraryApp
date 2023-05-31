@@ -66,11 +66,6 @@ pipeline {
             }
         }
     }
-    post {
-        failure {
-            mail to: 'benjamin.muschko@gmail.com', subject: 'Build failed', body: 'Please fix!'
-        }
-    }
 
     post {
         always {
