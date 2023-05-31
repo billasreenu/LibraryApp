@@ -4,6 +4,8 @@ pipeline {
     options {
         // Timeout counter starts AFTER agent is allocated
         timeout(time: 900, unit: 'SECONDS')
+		disableConcurrentBuilds(abortPrevious: true)
+		timestamps()
     }
     
 	stages {
