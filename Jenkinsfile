@@ -13,18 +13,22 @@ pipeline {
 				custExecGradleTask('clean')
             }
         }
+        stage('Unit Tests') {
+            steps {
+                custExecGradleTask('test')
+            }
+            post {
+                always {
+                    junit '**/build/test-results/test/TEST-*.xml'
+                }
+            }
+        }
        stage('Build') {
             steps {
                 echo 'Hello World'
 				custExecGradleTask('build')
             }
-        }
-       stage('test') {
-            steps {
-                echo 'Hello test'
-				//custExecGradleTask('clean')
-            }
-        }		
+        }	
     }
 	
     post {
