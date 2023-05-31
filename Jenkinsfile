@@ -1,68 +1,32 @@
 pipeline {
     agent any
-
-    stages {
-        stage('Compile') {
-            steps {
-                custExecGradleTask('clean')
-            }
-        }
-        stage('Unit Tests') {
-            steps {
-                custExecGradleTask('test')
-            }
-            post {
-                always {
-                    junit '**/build/test-results/test/TEST-*.xml'
-                }
-            }
-        }
-        stage('Long-running Verification') {
-            environment {
-                SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
-            }
-            parallel {
-                stage('Integration Tests') {
-                    steps {
-                        custExecGradleTask('integrationTest')
-                    }
-                    post {
-                        always {
-                            junit '**/build/test-results/integrationTest/TEST-*.xml'
-                        }
-                    }
-                }
-                stage('Code Analysis') {
-                    steps {
-                        custExecGradleTask('sonarqube')
-                    }
-                }
-            }
-        }
-        stage('Assemble') {
-            steps {
-                custExecGradleTask('assemble')
-                stash includes: '**/build/libs/*.war', name: 'app'
-            }
-        }
-        stage('Promotion') {
-            steps {
-                timeout(time: 1, unit:'DAYS') {
-                    input 'Deploy to Production?'
-                }
-            }
-        }
-        stage('Deploy to Production') {
-            environment {
-                HEROKU_API_KEY = credentials('HEROKU_API_KEY')
-            }
-            steps {
-                unstash 'app'
-                custExecGradleTask('deployHeroku')
-            }
-        }
+	
+    options {
+        // Timeout counter starts AFTER agent is allocated
+        timeout(time: 900, unit: 'SECONDS')
     }
-
+    
+	stages {
+        stage('Clean') {
+            steps {
+                echo 'Hello World'
+				custExecGradleTask('clean')
+            }
+        }
+       stage('Build') {
+            steps {
+                echo 'Hello World'
+				custExecGradleTask('build')
+            }
+        }
+       stage('test') {
+            steps {
+                echo 'Hello test'
+				//custExecGradleTask('clean')
+            }
+        }		
+    }
+	
     post {
         always {
             echo 'I have finished'
@@ -86,5 +50,5 @@ pipeline {
 }
 
 def custExecGradleTask(String... args) {
-    sh "./gradlew ${args.join(' ')} -s"
+    bat "./gradlew ${args.join(' ')} -s"
 }
