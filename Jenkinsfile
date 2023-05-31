@@ -29,6 +29,13 @@ pipeline {
 				custExecGradleTask('build')
             }
         }	
+       stage('Assemble') {
+            steps {
+                custExecGradleTask('assemble')
+                stash includes: '**/build/libs/*.war', name: 'app'
+            }
+        }
+		
     }
 	
     post {
