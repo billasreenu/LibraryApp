@@ -8,12 +8,12 @@ pipeline {
     stages {
         stage('Compile') {
             steps {
-                gradlew('clean', 'classes')
+                custExecGradleTask('clean', 'classes')
             }
         }
         stage('Unit Tests') {
             steps {
-                gradlew('test')
+                custExecGradleTask('test')
             }
             post {
                 always {
@@ -28,7 +28,7 @@ pipeline {
             parallel {
                 stage('Integration Tests') {
                     steps {
-                        gradlew('integrationTest')
+                        custExecGradleTask('integrationTest')
                     }
                     post {
                         always {
@@ -38,14 +38,14 @@ pipeline {
                 }
                 stage('Code Analysis') {
                     steps {
-                        gradlew('sonarqube')
+                        custExecGradleTask('sonarqube')
                     }
                 }
             }
         }
         stage('Assemble') {
             steps {
-                gradlew('assemble')
+                custExecGradleTask('assemble')
                 stash includes: '**/build/libs/*.war', name: 'app'
             }
         }
@@ -62,7 +62,7 @@ pipeline {
             }
             steps {
                 unstash 'app'
-                gradlew('deployHeroku')
+                custExecGradleTask('deployHeroku')
             }
         }
     }
@@ -71,8 +71,29 @@ pipeline {
             mail to: 'benjamin.muschko@gmail.com', subject: 'Build failed', body: 'Please fix!'
         }
     }
+
+    post {
+        always {
+            echo 'I have finished'
+			mail to: 'billa.sreenivasarao@gmail.com', subject: 'Build Completed', body: 'Please verify status!'
+            deleteDir() // clean up workspace
+        }
+        success {
+            echo 'I succeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things are different...'
+        }
+    }
+	
 }
 
-def gradlew(String... args) {
+def custExecGradleTask(String... args) {
     sh "./gradlew ${args.join(' ')} -s"
 }
