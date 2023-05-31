@@ -1,0 +1,1 @@
+java -jar build/libs/college-library-1.0.war
