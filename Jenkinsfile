@@ -9,11 +9,12 @@ pipeline {
 	stages {
         stage('Clean') {
             steps {
-                echo 'Hello World'
+                echo 'Execute gradle clean step'
 				custExecGradleTask('clean')
             }
         }
         stage('Unit Tests') {
+		    echo 'Execute gradle test step'
             steps {
                 custExecGradleTask('test')
             }
@@ -25,12 +26,13 @@ pipeline {
         }
        stage('Build') {
             steps {
-                echo 'Hello World'
+                echo 'Execute gradle build step'
 				custExecGradleTask('build')
             }
         }	
        stage('Assemble') {
             steps {
+			    echo 'Execute gradle assemble step'
                 custExecGradleTask('assemble')
                 stash includes: '**/build/libs/*.war', name: 'app'
             }
